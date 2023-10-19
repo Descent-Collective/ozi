@@ -1,0 +1,7 @@
+collateral_pair = ["abc/def", "ghi/jkl"]
+exchange_orign = ""
+exchange_key = ""
+interval = 5000
+ethereum_key = ""
+# port = "64056"
+topic = "ozi_test"
