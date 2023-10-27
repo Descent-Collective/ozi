@@ -1,4 +1,5 @@
-mod gossipsub;
+mod behavior;
+mod swarm;
 
 use std::thread;
 use std::time::Duration;
@@ -7,12 +8,12 @@ use anyhow::Result;
 use colored::Colorize;
 use config_file::FromConfigFile;
 use futures::StreamExt;
-use libp2p::{swarm::SwarmEvent, Multiaddr};
+use libp2p::{identity, swarm::SwarmEvent, Multiaddr};
 use serde::Deserialize;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "example", about = "An example of StructOpt usage.")]
+#[structopt(name = "ozi", about = "ozi usage.")]
 pub struct Opt {
     #[structopt(short = "c", long = "config", default_value = "node_config.toml")]
     config_path: String,
@@ -37,6 +38,8 @@ pub struct NodeConfig {
     collateral_pair: Vec<String>,
     /// Port to listen on
     port: Option<String>,
+    /// Bootstrap nodes for peer discovery with kademlia protocol
+    bootstrap_nodes: Vec<String>,
 }
 
 #[tokio::main]
@@ -53,30 +56,42 @@ async fn main() {
 }
 
 async fn main_impl(opt: Opt) -> Result<()> {
+    let id_keys = identity::Keypair::generate_ed25519();
+
     let config = NodeConfig::from_config_file(opt.config_path.clone())?;
     let topic = libp2p_gossipsub::IdentTopic::new(config.topic.clone());
-    let mut swarm = gossipsub::new_swarm(&config, &topic).await?;
+    let mut swarm = swarm::new_swarm(id_keys.clone(), &config, &topic).await?;
 
     loop {
         match swarm.select_next_some().await {
             SwarmEvent::NewListenAddr { address, .. } => {
-                println!("Listening on {address:?}")
+                println!("Listening on {address:?}");
+                swarm
+                    .behaviour_mut()
+                    .kademlia
+                    .add_address(&id_keys.public().to_peer_id(), address);
             }
             SwarmEvent::Behaviour(event) => match event {
-                libp2p_gossipsub::Event::Message {
-                    message,
-                    propagation_source,
-                    ..
-                } => {
-                    let data = String::from_utf8_lossy(message.data.as_slice());
-                    let peer = propagation_source;
-                    println!("{peer:?} sent: {data:?}");
-                }
-                libp2p_gossipsub::Event::Subscribed { peer_id, topic } => {
-                    let peer = peer_id;
-                    println!("{peer:?} subscribed to: {topic:?}");
-                }
-                _ => {}
+                behavior::Event::Ping(_) => todo!(),
+                behavior::Event::Kademlia(_) => todo!(),
+                behavior::Event::GossipSub(event) => match event {
+                    libp2p_gossipsub::Event::Message {
+                        propagation_source,
+                        message,
+                        ..
+                    } => {
+                        let data = String::from_utf8_lossy(message.data.as_slice());
+                        let peer = propagation_source;
+                        println!("{peer:?} sent: {data:?}");
+                    }
+                    libp2p_gossipsub::Event::Subscribed { peer_id, topic } => {
+                        let peer = peer_id;
+                        println!("{peer:?} subscribed to: {topic:?}");
+                    }
+                    libp2p_gossipsub::Event::Unsubscribed { peer_id, topic } => todo!(),
+                    libp2p_gossipsub::Event::GossipsubNotSupported { peer_id } => todo!(),
+                },
+                behavior::Event::Identify(_) => todo!(),
             },
             SwarmEvent::Dialing {
                 peer_id,
@@ -90,7 +105,9 @@ async fn main_impl(opt: Opt) -> Result<()> {
         }
         if let Some(message) = opt.message.clone() {
             let behavior = swarm.behaviour_mut();
-            let publish = behavior.publish(topic.clone(), message.as_bytes());
+            let publish = behavior
+                .gossipsub
+                .publish(topic.clone(), message.as_bytes());
             if publish.is_ok() {
                 thread::sleep(Duration::from_millis(config.interval));
             }

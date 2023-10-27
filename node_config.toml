@@ -5,3 +5,4 @@ interval = 5000
 ethereum_key = ""
 # port = "64056"
 topic = "ozi_test"
+bootstrap_nodes = []
