@@ -13,6 +13,8 @@ pub async fn new_swarm(
 ) -> Result<Swarm<Behaviour>> {
     let local_peer_id = id_keys.public().to_peer_id();
 
+    println!("My peer id is {local_peer_id:?}");
+
     let mut behavior = Behaviour::new(local_peer_id, id_keys.clone(), config)
         .expect("should be able to create behavior");
 

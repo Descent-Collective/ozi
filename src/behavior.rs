@@ -40,15 +40,13 @@ impl Behaviour {
 
         for addr in node_config.bootstrap_nodes.clone() {
             let multiaddr: Multiaddr = addr.parse()?;
-            let peer_id = multiaddr
-                .iter()
-                .find_map(|x| match x {
-                    libp2p::multiaddr::Protocol::P2p(peer_id) => Some(peer_id),
-                    _ => None,
-                })
-                .ok_or_else(|| eyre!("not a valid peer id"))?;
-            println!("👥 Kademlia bootstraped by peer: {peer_id} with address: {multiaddr}");
-            kademlia.add_address(&peer_id, multiaddr);
+            if let Some(peer_id) = multiaddr.iter().find_map(|x| match x {
+                libp2p::multiaddr::Protocol::P2p(peer_id) => Some(peer_id),
+                _ => None,
+            }) {
+                kademlia.add_address(&peer_id, multiaddr.clone());
+                println!("👥 Kademlia bootstraped by peer: {peer_id} with address: {multiaddr}");
+            }
         }
 
         // let gossipsub_config = libp2p_gossipsub::Config::default();

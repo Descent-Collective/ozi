@@ -73,7 +73,30 @@ async fn main_impl(opt: Opt) -> Result<()> {
             }
             SwarmEvent::Behaviour(event) => match event {
                 behavior::Event::Ping(_) => todo!(),
-                behavior::Event::Kademlia(_) => todo!(),
+                behavior::Event::Kademlia(event) => match event {
+                    libp2p::kad::KademliaEvent::InboundRequest { request } => todo!(),
+                    libp2p::kad::KademliaEvent::OutboundQueryProgressed {
+                        id,
+                        result,
+                        stats,
+                        step,
+                    } => todo!(),
+                    libp2p::kad::KademliaEvent::RoutingUpdated {
+                        peer,
+                        is_new_peer,
+                        addresses,
+                        bucket_range,
+                        old_peer,
+                    } => {
+                        println!("Routing updated {peer} {is_new_peer} {addresses:?}");
+                        for address in addresses.iter() {
+                            swarm.dial(address.clone())?;
+                        }
+                    }
+                    libp2p::kad::KademliaEvent::UnroutablePeer { peer } => todo!(),
+                    libp2p::kad::KademliaEvent::RoutablePeer { peer, address } => todo!(),
+                    libp2p::kad::KademliaEvent::PendingRoutablePeer { peer, address } => todo!(),
+                },
                 behavior::Event::GossipSub(event) => match event {
                     libp2p_gossipsub::Event::Message {
                         propagation_source,
@@ -91,12 +114,23 @@ async fn main_impl(opt: Opt) -> Result<()> {
                     libp2p_gossipsub::Event::Unsubscribed { peer_id, topic } => todo!(),
                     libp2p_gossipsub::Event::GossipsubNotSupported { peer_id } => todo!(),
                 },
-                behavior::Event::Identify(_) => todo!(),
+                behavior::Event::Identify(event) => match event {
+                    libp2p::identify::Event::Received { peer_id, info } => {
+                        if info
+                            .protocols
+                            .iter()
+                            .any(|p| p.clone() == libp2p::kad::PROTOCOL_NAME)
+                        {
+                            for addr in info.listen_addrs {
+                                swarm.behaviour_mut().kademlia.add_address(&peer_id, addr);
+                            }
+                        }
+                    }
+                    libp2p::identify::Event::Sent { peer_id } => todo!(),
+                    libp2p::identify::Event::Pushed { peer_id } => todo!(),
+                    libp2p::identify::Event::Error { peer_id, error } => todo!(),
+                },
             },
-            SwarmEvent::Dialing {
-                peer_id,
-                connection_id,
-            } => println!("Dialing {peer_id:?} from {connection_id:?}"),
             _ => {}
         }
         if let Some(addr) = opt.ping.clone() {
