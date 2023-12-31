@@ -1,0 +1,48 @@
+[package]
+name = "ozi"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/Descent-Collective/ozi.git"
+authors = ["Kourtney Chima <kourtccode@gmail.com>"]
+
+[dependencies]
+config-file = "0.2.3"
+futures = "0.3.28"
+libp2p = { version = "0.52.3", features = [
+    "tcp",
+    "dns",
+    "noise",
+    "yamux",
+    "websocket",
+    "ping",
+    "macros",
+    "tokio",
+    "kad",
+    "identify",
+] }
+serde = { version = "1.0.189", features = ["derive"] }
+serde_json = "1.0.107"
+tokio = { version = "1", features = ["full"] }
+anyhow = "1.0"
+structopt = "0.3.26"
+colored = "2.0.4"
+libp2p-gossipsub = "0.45.1"
+quick-error = "2.0.1"
+eyre = "0.6.8"
+reqwest = { version = "0.11.22", features = ["json"] }
+strum = { version = "0.25", features = ["derive"] }
+serde_with = "3.4.0"
+dotenv = "0.15.0"
+ethers = { version = "2.0", features = ["rustls"] }
+async-trait = "0.1.74"
+hex = "0.4.3"
+tarpc = { version = "0.33", features = ["full"] }
+tracing = "0.1.40"
+tracing-opentelemetry = "0.22.0"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+opentelemetry = "0.21.0"
+opentelemetry_sdk = { version = "0.21.1", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.14.0", features = ["tonic"] }
+libp2p-tls = "0.3.0"
+libp2p-noise = "0.44.0"
+libp2p-yamux = "0.45.1"

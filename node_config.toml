@@ -1,10 +1,12 @@
-collateral_pair = ["abc/def", "ghi/jkl"]
-exchange_orign = ""
-exchange_key = ""
-interval = 5000
-ethereum_key = ""
+# For all keys, provide env vars. Do not add your actual keys to this config
+private_key = "METAMASK_KEY"
+cryptocompare_key = ""
+numerofx_key = ""
+collateral_pairs = ["USDC/NGN", "USDC/JPY", "ETH/NGN", "ETH/JPY"]
+interval = 20000
 topic = "ozi_test"
 bootstrap_nodes = [
-    # replace with list of our servers IP address / TCP port and generated peer id
+    # Replace with list of our servers IP address / TCP port and generated peer id
     "/ip4/127.0.0.1/tcp/61923/p2p/12D3KooWDkgfBMii8QZFMqpiZWUmRjiPSMo8P2MJEyVsoYCLLZ58",
 ]
+relayer_address = "localhost:8080"
