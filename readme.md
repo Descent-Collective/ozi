@@ -1,26 +1,29 @@
 POC for using libp2p gossipsub protocol to broadcast signed price messages for relayer clients to pick it up and send to the oracle smart contract.
 
 **TODO:**
-- use kademlia for peer discovery. right now we do it by pinging a peer. see https://github.com/libp2p/rust-libp2p/discussions/2447
-- Get price for a particular collateral pair(e.g USDC/NGN) from listed exchanges(e.g. cryptocompare)
-- Sign price data using nodes private keys
-- Use variables from config to make API calls to exchanges.
+- [x] use kademlia for peer discovery. right now we do it by pinging a peer. see https://github.com/libp2p/rust-libp2p/discussions/2447
+- [x] Get price for a particular collateral pair(e.g USDC/NGN) from listed exchanges(e.g. cryptocompare)
+- [x] Sign price data using nodes private keys
+- [x] Use variables from config to make API calls to exchanges.
+- [ ] implement price fetching for more exchanges.
 
 ## usage
 
 In one terminal:
 
-`$ cd ozi && cargo run -- m "hello"`
+`$ cd ozi && cargo run -p relayer -- --port <PORT>`
 
 The following will be printed:
 
-Listening on *< address >*
+Listening on port *< address >*
 
 ------
 
-In another terminal:
+Update node_config.toml with the correct relayer address. For local testing, use localhost:<PORT>
 
-`$ cd ozi && cargo run --m "hello from 2" -p < address >`
+Then in another terminal:
+
+`$ cd ozi && cargo run -p node`
 
 
 
