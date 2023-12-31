@@ -15,11 +15,11 @@ In one terminal:
 
 The following will be printed:
 
-Listening on port *< address >*
+Listening on *< address >*
 
 ------
 
-Update node_config.toml with the correct relayer address. For local testing, use localhost:<PORT>
+Update node_config.toml with the correct relayer address. For local testing, use localhost:*< PORT >*
 
 Then in another terminal:
 
