@@ -11,7 +11,7 @@ POC for using libp2p gossipsub protocol to broadcast signed price messages for r
 
 In one terminal:
 
-`$ cd ozi && cargo run -p relayer -- --port <PORT>`
+`$ cargo run -p relayer -- --port <PORT>`
 
 The following will be printed:
 
@@ -23,7 +23,7 @@ Update node_config.toml with the correct relayer address. For local testing, use
 
 Then in another terminal:
 
-`$ cd ozi && cargo run -p node`
+`$ cargo run -p node`
 
 
 
