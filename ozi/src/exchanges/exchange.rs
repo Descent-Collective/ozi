@@ -1,18 +1,13 @@
 use std::str::FromStr;
 
 use async_trait::async_trait;
-
-use ethers::{
-    abi::Token,
-    signers::LocalWallet,
-    types::{Bytes, H256},
-};
+use ethers::abi::Token;
+use ethers::signers::LocalWallet;
+use ethers::types::{Bytes, H256};
 use reqwest::Url;
 
-use super::{
-    types::{CollateralPair, Price},
-    utils,
-};
+use super::utils;
+use super::{CollateralPair, Price};
 
 #[async_trait]
 pub trait Exchange {

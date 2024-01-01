@@ -1,10 +1,7 @@
 use async_trait::async_trait;
 use reqwest::{Client, Url};
 
-use super::{
-    exchange::Exchange,
-    types::{CollateralPair, Price},
-};
+use super::{CollateralPair, Exchange, Price};
 
 pub struct NumeroFx {
     #[allow(dead_code)]

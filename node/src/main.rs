@@ -5,13 +5,12 @@ use std::time::Duration;
 
 use anyhow::Result;
 use colored::Colorize;
+use config::NodeConfig;
 use config_file::FromConfigFile;
 use ozi::{CryptoCompare, Exchange, PriceServiceClient};
 use structopt::StructOpt;
 use tarpc::{client, context, tokio_serde::formats::Json};
 use tracing::Instrument;
-
-use config::NodeConfig;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "ozi-client", about = "ozi client usage.")]

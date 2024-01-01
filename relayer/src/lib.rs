@@ -6,7 +6,13 @@ use tarpc::context;
 use tokio::time;
 
 #[derive(Clone)]
-pub struct RelayerClient(pub SocketAddr);
+pub struct RelayerClient(SocketAddr);
+
+impl RelayerClient {
+    pub fn new_with_socket_addr(addr: SocketAddr) -> Self {
+        RelayerClient(addr)
+    }
+}
 
 #[tarpc::server]
 impl PriceService for RelayerClient {

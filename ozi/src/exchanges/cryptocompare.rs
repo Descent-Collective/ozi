@@ -5,11 +5,8 @@ use futures::{stream, StreamExt};
 use reqwest::{Client, RequestBuilder, Url};
 use serde::Deserialize;
 
-use super::{
-    exchange::Exchange,
-    types::{CollateralPair, Price, Symbol},
-    utils,
-};
+use super::utils;
+use super::{CollateralPair, Exchange, Price, Symbol};
 
 pub struct CryptoCompare {
     client: Client,
@@ -27,7 +24,10 @@ impl CryptoCompare {
         mut collateral_pairs: Vec<CollateralPair>,
     ) -> Vec<(Symbol, RequestBuilder)> {
         collateral_pairs.sort();
-        let mut fsyms = collateral_pairs.iter().map(|f| f.fsym).collect::<Vec<_>>();
+        let mut fsyms = collateral_pairs
+            .iter()
+            .map(|pair| pair.0)
+            .collect::<Vec<_>>();
         fsyms.dedup();
 
         let queries = fsyms
@@ -37,8 +37,8 @@ impl CryptoCompare {
                     .clone()
                     .iter()
                     .filter_map(move |pair| {
-                        if pair.fsym.eq(&fsym) {
-                            Some(pair.tsym.to_string())
+                        if pair.0.eq(&fsym) {
+                            Some(pair.1.to_string())
                         } else {
                             None
                         }
@@ -124,26 +124,11 @@ mod tests {
     #[test]
     fn test_gen_query() {
         let r = CryptoCompare::new().gen_queries(vec![
-            CollateralPair {
-                fsym: Symbol::JPY,
-                tsym: Symbol::NGN,
-            },
-            CollateralPair {
-                fsym: Symbol::USDC,
-                tsym: Symbol::JPY,
-            },
-            CollateralPair {
-                fsym: Symbol::JPY,
-                tsym: Symbol::USD,
-            },
-            CollateralPair {
-                fsym: Symbol::USDC,
-                tsym: Symbol::ETH,
-            },
-            CollateralPair {
-                fsym: Symbol::USDC,
-                tsym: Symbol::NGN,
-            },
+            CollateralPair(Symbol::JPY, Symbol::NGN),
+            CollateralPair(Symbol::USDC, Symbol::JPY),
+            CollateralPair(Symbol::JPY, Symbol::USD),
+            CollateralPair(Symbol::USDC, Symbol::ETH),
+            CollateralPair(Symbol::USDC, Symbol::NGN),
         ]);
 
         assert_eq!(r.len(), 2);

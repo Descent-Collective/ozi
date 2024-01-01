@@ -41,14 +41,11 @@ impl Symbol {
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, PartialOrd, Eq, Ord)]
-pub struct CollateralPair {
-    pub fsym: Symbol,
-    pub tsym: Symbol,
-}
+pub struct CollateralPair(pub Symbol, pub Symbol);
 
 impl ToString for CollateralPair {
     fn to_string(&self) -> String {
-        format!("{}/{}", self.fsym, self.tsym)
+        format!("{}/{}", self.0, self.1)
     }
 }
 
@@ -83,7 +80,7 @@ impl TryFrom<&str> for CollateralPair {
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match Symbol::parse_symbols(value, "/") {
-            Ok((fsym, tsym)) => Ok(CollateralPair { fsym, tsym }),
+            Ok((fsym, tsym)) => Ok(CollateralPair(fsym, tsym)),
             Err(e) => Err(anyhow!("Unable to parse collateral pair: {e:?}")),
         }
     }
@@ -111,10 +108,7 @@ impl Price {
     const ETHERS_UNIT: u32 = 6;
 
     fn collateral_pair(&self) -> CollateralPair {
-        CollateralPair {
-            fsym: self.fsym,
-            tsym: self.tsym,
-        }
+        CollateralPair(self.fsym, self.tsym)
     }
 }
 
@@ -161,8 +155,8 @@ impl TryFrom<Token> for Price {
                         let cp = CollateralPair::try_from(collateral_pair.as_str())?;
 
                         Ok(Price {
-                            fsym: cp.fsym,
-                            tsym: cp.tsym,
+                            fsym: cp.0,
+                            tsym: cp.1,
                             rate,
                             timestamp,
                         })

@@ -43,7 +43,8 @@ async fn main_impl(opt: Opt) -> anyhow::Result<()> {
         .map(server::BaseChannel::with_defaults)
         .max_channels_per_key(1, |t| t.transport().peer_addr().unwrap().ip())
         .map(|channel| {
-            let server = RelayerClient(channel.transport().peer_addr().unwrap());
+            let server =
+                RelayerClient::new_with_socket_addr(channel.transport().peer_addr().unwrap());
             channel.execute(server.serve())
         })
         .buffer_unordered(10)

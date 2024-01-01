@@ -1,4 +1,5 @@
-use {ozi::CollateralPair, serde::Deserialize};
+use ozi::CollateralPair;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct NodeConfig {

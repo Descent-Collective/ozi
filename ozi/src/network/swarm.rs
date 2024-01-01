@@ -1,10 +1,8 @@
-mod behavior;
-
-pub use behavior::{Behaviour, Event};
-
 use anyhow::Result;
 use libp2p::{identity, noise, yamux, Swarm};
 use libp2p_gossipsub::IdentTopic;
+
+use super::behavior::Behaviour;
 
 pub async fn new_swarm(
     id_keys: identity::Keypair,
