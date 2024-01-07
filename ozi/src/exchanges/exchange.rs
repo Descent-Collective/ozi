@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use anyhow::{Context, Result};
 use async_trait::async_trait;
 use ethers::abi::Token;
 use ethers::signers::LocalWallet;
@@ -11,6 +12,7 @@ use super::{CollateralPair, Price};
 
 #[async_trait]
 pub trait Exchange {
+    fn name() -> &'static str;
     fn url() -> Url;
     async fn fetch_prices(&self, collateral_pairs: Vec<CollateralPair>) -> Vec<Price>;
 
@@ -18,12 +20,13 @@ pub trait Exchange {
         &self,
         collateral_pairs: Vec<CollateralPair>,
         private_key: String,
-    ) -> (Vec<u8>, Bytes) {
+    ) -> Result<(Vec<u8>, Bytes)> {
         dotenv::dotenv().ok();
-        let key = std::env::var(private_key).expect("Ethereum key must be set in your .env file");
+        let key =
+            std::env::var(private_key).context("Ethereum key must be set in your .env file")?;
         let wallet = LocalWallet::from_bytes(
             H256::from_str(key.as_str())
-                .expect("Invalid hex private key")
+                .context("Invalid hex private key")?
                 .as_bytes(),
         )
         .unwrap();
@@ -33,6 +36,6 @@ pub trait Exchange {
         let encoded_message = ethers::abi::encode(&[tokens]);
         let signature = utils::sign_message(wallet, encoded_message.clone()).await;
 
-        (encoded_message, signature)
+        Ok((encoded_message, signature))
     }
 }

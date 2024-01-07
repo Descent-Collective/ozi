@@ -16,12 +16,7 @@ impl RelayerClient {
 
 #[tarpc::server]
 impl PriceService for RelayerClient {
-    async fn add_prices(
-        self,
-        _: context::Context,
-        encoded_message: Vec<u8>,
-        signature: Bytes,
-    ) -> String {
+    async fn add_prices(self, _: context::Context, data: Vec<u8>, signature: Bytes) -> String {
         let sleep_time = Duration::from_millis(3000);
         time::sleep(sleep_time).await;
 
@@ -31,16 +26,16 @@ impl PriceService for RelayerClient {
                 ParamType::Uint(256),
                 ParamType::String,
             ])))],
-            &encoded_message,
+            &data,
         )
         .expect("failed to decode message");
 
         let tokens = tokens
             .first()
-            .expect("decoded vec must be non empty")
+            .expect("decoded message must be non empty")
             .to_owned()
             .into_array()
-            .expect("token cannot be converted to array");
+            .expect("token must be able to be converted to array");
 
         let prices: Vec<Price> = tokens
             .clone()
@@ -55,7 +50,7 @@ impl PriceService for RelayerClient {
             self.0
         );
 
-        println!("{resp}");
+        eprintln!("{resp}");
 
         resp
     }

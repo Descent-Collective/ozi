@@ -1,12 +1,15 @@
-# For all keys, provide env vars. Do not add your actual keys to this config
-private_key = "METAMASK_KEY"
-cryptocompare_key = ""
-numerofx_key = ""
+# For all keys indicated, please set env vars and update this config accordingly. 
+# Do NOT add your actual keys to this config.
+
+# Private key used for signing all data sent to the relayer.
+private_key = "PRIVATE_KEY"
+
+# Exchange keys
+cryptocompare_key = "CRYPTOCOMPARE_KEY"
+numerofx_key = "NUMEROFX_KEY"
+# ...add more
+
+# TODO: should any of this be hard coded?
 collateral_pairs = ["USDC/NGN", "USDC/JPY", "ETH/NGN", "ETH/JPY"]
 interval = 20000
-topic = "ozi_test"
-bootstrap_nodes = [
-    # Replace with list of our servers IP address / TCP port and generated peer id
-    "/ip4/127.0.0.1/tcp/61923/p2p/12D3KooWDkgfBMii8QZFMqpiZWUmRjiPSMo8P2MJEyVsoYCLLZ58",
-]
 relayer_address = "localhost:8080"

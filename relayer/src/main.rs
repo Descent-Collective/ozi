@@ -25,7 +25,7 @@ async fn main() {
         Ok(_) => {}
         Err(err) => {
             for cause in err.chain() {
-                println!("{}", cause.to_string().red());
+                eprintln!("{}", cause.to_string().red());
             }
         }
     }
@@ -36,7 +36,7 @@ async fn main_impl(opt: Opt) -> anyhow::Result<()> {
     let mut listener = tarpc::serde_transport::tcp::listen(&server_addr, Json::default).await?;
     listener.config_mut().max_frame_length(usize::MAX);
 
-    println!("Listening on port {}", listener.local_addr().port());
+    eprintln!("Listening on port {}", listener.local_addr().port());
 
     listener
         .filter_map(|r| future::ready(r.ok()))

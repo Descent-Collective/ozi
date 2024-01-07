@@ -73,6 +73,10 @@ impl Into<HashMap<Symbol, f32>> for Response {
 
 #[async_trait]
 impl Exchange for CryptoCompare {
+    fn name() -> &'static str {
+        "Cryptocompare"
+    }
+
     fn url() -> Url {
         Url::try_from("https://min-api.cryptocompare.com/data/price").unwrap()
     }
@@ -104,7 +108,11 @@ impl Exchange for CryptoCompare {
                 match body {
                     Ok(_) => body.ok(),
                     Err(err) => {
-                        println!("wahala {err:?}");
+                        eprintln!(
+                            "error getting price from {}: {:?}",
+                            CryptoCompare::name(),
+                            err
+                        );
                         None
                     }
                 }

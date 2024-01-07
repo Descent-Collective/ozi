@@ -54,7 +54,7 @@ impl CollateralPair {
     fn as_64_len_hex_string(&self) -> String {
         let hexstr = hex::encode(self.to_string());
         let tstr = format!("{:0<64}", hexstr);
-        println!("{} -> {}", hexstr, tstr);
+        eprintln!("{} -> {}", hexstr, tstr);
         tstr
     }
 

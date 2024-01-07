@@ -18,6 +18,10 @@ impl NumeroFx {
 
 #[async_trait]
 impl Exchange for NumeroFx {
+    fn name() -> &'static str {
+        "NumeroFX"
+    }
+
     fn url() -> Url {
         Url::try_from("https://api.numerofx.com/api/v1/developer/rates").unwrap()
     }
